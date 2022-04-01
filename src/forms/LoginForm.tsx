@@ -15,6 +15,7 @@ export function LoginForm(){
                   id="email"
                   placeholder="E-mail"
                   type="email"
+                  name="email"
                 />
                 <DefaultInput
                   id="password"
