@@ -25,14 +25,14 @@ export function UserForm() {
                 validationErrors[error.path] = error.message;
             });
             const currentErrors = formRef.current.getErrors()
-            formRef.current.setErrors({...validationErrors, ...currentErrors});
+            formRef.current.setErrors({ ...validationErrors, ...currentErrors });
         }
     }
     const validateSchemas: ValidationSchemas = {
         name: Yup.string().required(),
         email: Yup.string().email().required(),
         password: Yup.string().min(6).required(),
-        passwordConfirmation: Yup.string().required('Digite a senha novamente!').oneOf([Yup.ref('password'),null], 'As senhas são diferentes!'),
+        passwordConfirmation: Yup.string().required('Digite a senha novamente!').oneOf([Yup.ref('password'), null], 'As senhas são diferentes!'),
         phoneNumber: Yup.string().matches(phoneRegExp, 'Numero inválido!'),
         photo: Yup.string()
     }
@@ -47,27 +47,37 @@ export function UserForm() {
         })
         formRef.current.setErrors(updatedErrors);
     }
-    const removeSpecialCharacters = (str:string) => str.replace(/[~`!@#$%^&*()+={}\[\];:\'\"<>.,\/\\\?-_]/g, '')
+    const removeSpecialCharacters = (str: string) => str.replace(/[~`!@#$%^&*()+={}\[\];:\'\"<>.,\/\\\?-_]/g, '')
     const handleValidate = async (schemas: ValidationSchemas, name: NameFields) => {
         try {
             let schema = {} as Yup.ObjectSchema<any>
-            if(name === 'password' || name==='passwordConfirmation'){
-                schema = Yup.object().shape({password:schemas['password'],'passwordConfirmation':schemas['passwordConfirmation'],})
-                await schema.validate({
-                    ['passwordConfirmation']: formRef.current.getFieldValue('passwordConfirmation'),
-                    ['password']: formRef.current.getFieldValue('password')
-                }, {
-                    abortEarly: false
-                })
-                deleteValidationError(['password', 'passwordConfirmation'])
-            }else{
-                schema = Yup.object().shape({[name]:schemas[name]})
-                await schema.validate({[name]: removeSpecialCharacters(formRef.current.getFieldValue(name))}, {
-                    abortEarly: false
-                })
-                deleteValidationError([name])
+            const fieldValue = formRef.current.getFieldValue(name)
+            if (name === 'password' || name === 'passwordConfirmation') {
+                if (formRef.current.getFieldValue('passwordConfirmation').length) {
+                    schema = Yup.object().shape({ password: schemas['password'], 'passwordConfirmation': schemas['passwordConfirmation'], })
+                    await schema.validate({
+                        ['passwordConfirmation']: formRef.current.getFieldValue('passwordConfirmation'),
+                        ['password']: formRef.current.getFieldValue('password')
+                    }, {
+                        abortEarly: false
+                    })
+                    deleteValidationError(['password', 'passwordConfirmation'])
+                    return;
+                }
             }
-            
+            schema = Yup.object().shape({ [name]: schemas[name] })
+            if (name === 'phoneNumber') {
+                await schema.validate({ [name]: removeSpecialCharacters(fieldValue) }, {
+                    abortEarly: false
+                })
+            } else {
+                await schema.validate({ [name]: fieldValue }, {
+                    abortEarly: false
+                })
+            }
+            deleteValidationError([name])
+            return;
+
         } catch (error) {
             setValidationErrors(error)
         }
@@ -77,9 +87,9 @@ export function UserForm() {
         try {
             let formatedData = {}
             Object.keys(data).forEach(item => {
-                if('phoneNumber' === item){
+                if ('phoneNumber' === item) {
                     formatedData[item] = removeSpecialCharacters(data[item])
-                }else{
+                } else {
                     formatedData[item] = data[item]
                 }
             })
@@ -94,62 +104,66 @@ export function UserForm() {
         }
     }
     return (
-        <Form noValidate={false} ref={formRef} onSubmit={handleFormSubmit}>
-            <FormControl>
-                <Stack
-                    width={'100%'}
-                    spacing='1rem'
-                >
-                    <Text letterSpacing={'.4px'} fontWeight='600' color="#152542" w="100%" justifyContent={'center'}>Crie sua conta</Text>
-                    <Flex flexDir={'column'} align='center' justify={'space-around'}>
-                        <DefaultFileInput name="photo"/>
-                    </Flex>
-                    <DefaultInput
-                        id="name"
-                        placeholder="Nome"
-                        name="name"
-                        onChange={() => { handleValidate(validateSchemas, 'name') }}
+        <Stack
+            width={'100%'}
+        >
+            <Form noValidate={false} ref={formRef} onSubmit={handleFormSubmit}>
+                <FormControl>
+                    <Stack
+                        spacing='1rem'
+                    >
+
+                        <Text letterSpacing={'.4px'} fontWeight='600' color="#152542" w="100%" justifyContent={'center'}>Crie sua conta</Text>
+                        <Flex flexDir={'column'} align='center' justify={'space-around'}>
+                            <DefaultFileInput name="photo" />
+                        </Flex>
+                        <DefaultInput
+                            id="name"
+                            placeholder="Nome"
+                            name="name"
+                            onChange={() => { handleValidate(validateSchemas, 'name') }}
                         />
-                    <DefaultInput
-                        id="email"
-                        placeholder="E-mail"
-                        type="email"
-                        name="email"
-                        onChange={() => { handleValidate(validateSchemas, 'email') }}
+                        <DefaultInput
+                            id="email"
+                            placeholder="E-mail"
+                            type="email"
+                            name="email"
+                            onChange={() => { handleValidate(validateSchemas, 'email') }}
                         />
-                    <DefaultInput
-                        id="phoneNumber"
-                        placeholder="Telefone"
-                        name="phoneNumber"
-                        mask="(99)99999-9999"
-                        onChange={() => { handleValidate(validateSchemas, 'phoneNumber') }}
+                        <DefaultInput
+                            id="phoneNumber"
+                            placeholder="Telefone"
+                            name="phoneNumber"
+                            mask="(99)99999-9999"
+                            onChange={() => { handleValidate(validateSchemas, 'phoneNumber') }}
                         />
-                    <DefaultInput
-                        id="password"
-                        placeholder="Senha"
-                        type="password"
-                        name="password"
-                        onChange={() => { handleValidate(validateSchemas, 'password') }}
+                        <DefaultInput
+                            id="password"
+                            placeholder="Senha"
+                            type="password"
+                            name="password"
+                            onChange={() => { handleValidate(validateSchemas, 'password') }}
                         />
-                    <DefaultInput
-                        id="passwordConfirmation"
-                        placeholder="Confirmar Senha"
-                        type="password"
-                        name="passwordConfirmation"
-                        onChange={() => { handleValidate(validateSchemas, 'passwordConfirmation') }}
-                    />
-                    <Flex justify={'center'} style={{ marginTop: '1.5rem', marginBottom: '0.5rem' }}>
-                        <DefaultCheckbox
-                            id="permission"
-                            name="permission"
-                            label="Permissão de Acesso"
+                        <DefaultInput
+                            id="passwordConfirmation"
+                            placeholder="Confirmar Senha"
+                            type="password"
+                            name="passwordConfirmation"
+                            onChange={() => { handleValidate(validateSchemas, 'passwordConfirmation') }}
                         />
-                    </Flex>
-                    <DefaultButton type="submit">
-                        Registrar
-                    </DefaultButton>
-                </Stack>
-            </FormControl>
-        </Form>
+                        <Flex justify={'center'} style={{ marginTop: '1.5rem', marginBottom: '0.5rem' }}>
+                            <DefaultCheckbox
+                                id="permission"
+                                name="permission"
+                                label="Permissão de Acesso"
+                            />
+                        </Flex>
+                        <DefaultButton type="submit">
+                            Registrar
+                        </DefaultButton>
+                    </Stack>
+                </FormControl>
+            </Form>
+        </Stack>
     )
 }

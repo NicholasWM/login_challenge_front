@@ -58,7 +58,7 @@ export function DefaultInput({
                 {...rest}
             />
             {error && (
-                <span>
+                <span style={{marginTop:0}}>
                     <Text fontSize={"0.8rem"} color='red'>{error}</Text>
                 </span>
             )}

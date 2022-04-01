@@ -5,7 +5,7 @@ import { theme } from '../styles/theme'
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <ChakraProvider theme={theme}>
-      <Flex flexDir="column" justifyContent="center" alignItems="center" maxW="1440px">
+      <Flex maxWidth={'1112px'} m="auto" flexDir="column" justifyContent="center" alignItems="center">
         <Component {...pageProps} />
       </Flex>
     </ChakraProvider>
