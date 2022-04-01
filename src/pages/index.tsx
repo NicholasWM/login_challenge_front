@@ -7,7 +7,6 @@ import { UserForm } from '../forms/UserForm'
 export default function Home() {
   const isWideVersion = useBreakpointValue({
     base: false,
-
     md: false,
     lg: true
   })
@@ -23,8 +22,8 @@ export default function Home() {
       >
         <Box maxW={['692px', '692px', '692px', '462px']} flex={["0.5", '0.8']} >
           <DefaultCard>
-            {/* <LoginForm/> */}
-            <UserForm />
+            <LoginForm/>
+            {/* <UserForm /> */}
           </DefaultCard>
 
         </Box>

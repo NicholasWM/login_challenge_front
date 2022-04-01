@@ -1,24 +1,24 @@
-import { Flex, FormControl, Stack, Text } from "@chakra-ui/react";
-import { Form } from "@unform/web";
 import { useRef, useState } from "react";
+import { Form } from "@unform/web";
+import * as Yup from 'yup'
+import { Flex, FormControl, Stack, Text } from "@chakra-ui/react";
+
 import { DefaultButton } from "../components/DefaultButton";
 import { DefaultInput } from "../components/DefaultInput";
-import * as Yup from 'yup'
 import { DefaultCheckbox } from "../components/DefaultCheckbox";
 import DefaultFileInput from "../components/DefaultFileInput";
-import { deleteValidationError, phoneRegExp, removeSpecialCharacters, setValidationErrors, ValidationSchema } from "../helpers";
+
+import { deleteValidationError, phoneRegExp, removeSpecialCharacters, setValidationErrors, ValidationSchema, ValidationSchemas } from "../helpers";
 
 type NameFields = 'name' | 'email' | 'passwordConfirmation' | 'phoneNumber' | 'password' | 'photo'
-type ValidationSchemas = {
-    [name in NameFields]: ValidationSchema
-}
+type FormValidationSchemas = ValidationSchemas<NameFields>
 
 export function UserForm() {
     const [userName, setUsername] = useState('Username')
     
     const formRef = useRef(null)
 
-    const validateSchemas: ValidationSchemas = {
+    const validateSchemas: FormValidationSchemas = {
         name: Yup.string().required(),
         email: Yup.string().email().required(),
         password: Yup.string().min(6).required(),
@@ -27,7 +27,7 @@ export function UserForm() {
         photo: Yup.string()
     }
 
-    const handleValidate = async (schemas: ValidationSchemas, name: NameFields) => {
+    const handleValidate = async (schemas: FormValidationSchemas, name: NameFields) => {
         try {
             let schema = {} as Yup.ObjectSchema<any>
             const fieldValue = formRef.current.getFieldValue(name)

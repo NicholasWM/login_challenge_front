@@ -3,7 +3,9 @@ import { RequiredStringSchema } from "yup/lib/string"
 import { AnyObject } from "yup/lib/types"
 
 export type ValidationSchema = RequiredStringSchema<string, AnyObject>
-
+export type ValidationSchemas<T extends string> = {
+    [name in T]: ValidationSchema
+}
 interface IDeleteValidationError <T extends string> {
     names: T[],
     formRef:React.MutableRefObject<any>
