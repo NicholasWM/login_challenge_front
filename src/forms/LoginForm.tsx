@@ -21,6 +21,7 @@ export function LoginForm(){
                   id="password"
                   placeholder="Senha"
                   type="password"
+                  name="password"
                 />
                 <DefaultButton type="submit">
                   Entrar
