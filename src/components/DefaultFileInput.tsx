@@ -11,11 +11,12 @@ import { Avatar } from '@chakra-ui/react';
 
 interface Props {
     name: string;
+    userName?:string
 }
 
 type InputProps = JSX.IntrinsicElements['input'] & Props;
 
-export default function DefaultFileInput({ name, ...rest }: InputProps) {
+export default function DefaultFileInput({ name, userName='User',...rest }: InputProps) {
     const inputRef = useRef<HTMLInputElement>(null);
 
     const { fieldName, registerField, defaultValue, error } = useField(name);
@@ -50,7 +51,7 @@ export default function DefaultFileInput({ name, ...rest }: InputProps) {
 
     return (
         <>
-            <Avatar size='2xl' name='Name' src={preview ? preview : ''} />
+            <Avatar size='2xl' name={userName} src={preview ? preview : ''} />
             <input type="file" style={{marginTop:'1rem'}} ref={inputRef} onChange={handlePreview} {...rest} />
         </>
     );

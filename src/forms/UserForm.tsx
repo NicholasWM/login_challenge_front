@@ -1,6 +1,6 @@
 import { Avatar, Checkbox, Flex, FormControl, Stack, Text } from "@chakra-ui/react";
 import { Form } from "@unform/web";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { DefaultButton } from "../components/DefaultButton";
 import { DefaultInput } from "../components/DefaultInput";
 import * as Yup from 'yup'
@@ -15,9 +15,12 @@ type ValidationSchemas = {
     [name in NameFields]: ValidationSchema
 }
 export function UserForm() {
+    const [userName, setUsername] = useState('Username')
+    
     const formRef = useRef(null)
     const phoneRegExp = /^\s*(\d{2}|\d{0})[-. ]?(\d{5}|\d{4})[-. ]?(\d{4})[-. ]?\s*$/
-
+    const removeSpecialCharacters = (str: string) => str.replace(/[~`!@#$%^&*()+={}\[\];:\'\"<>.,\/\\\?-_]/g, '')
+useEffect(()=> {},[])
     const setValidationErrors = (error) => {
         const validationErrors = {};
         if (error instanceof Yup.ValidationError) {
@@ -28,6 +31,7 @@ export function UserForm() {
             formRef.current.setErrors({ ...validationErrors, ...currentErrors });
         }
     }
+
     const validateSchemas: ValidationSchemas = {
         name: Yup.string().required(),
         email: Yup.string().email().required(),
@@ -47,7 +51,6 @@ export function UserForm() {
         })
         formRef.current.setErrors(updatedErrors);
     }
-    const removeSpecialCharacters = (str: string) => str.replace(/[~`!@#$%^&*()+={}\[\];:\'\"<>.,\/\\\?-_]/g, '')
     const handleValidate = async (schemas: ValidationSchemas, name: NameFields) => {
         try {
             let schema = {} as Yup.ObjectSchema<any>
@@ -66,6 +69,9 @@ export function UserForm() {
                 }
             }
             schema = Yup.object().shape({ [name]: schemas[name] })
+            if(name=== 'name'){
+                setUsername(fieldValue)
+            }
             if (name === 'phoneNumber') {
                 await schema.validate({ [name]: removeSpecialCharacters(fieldValue) }, {
                     abortEarly: false
@@ -77,7 +83,6 @@ export function UserForm() {
             }
             deleteValidationError([name])
             return;
-
         } catch (error) {
             setValidationErrors(error)
         }
@@ -112,10 +117,9 @@ export function UserForm() {
                     <Stack
                         spacing='1rem'
                     >
-
                         <Text letterSpacing={'.4px'} fontWeight='600' color="#152542" w="100%" justifyContent={'center'}>Crie sua conta</Text>
                         <Flex flexDir={'column'} align='center' justify={'space-around'}>
-                            <DefaultFileInput name="photo" />
+                            <DefaultFileInput name="photo" userName={userName}/>
                         </Flex>
                         <DefaultInput
                             id="name"
