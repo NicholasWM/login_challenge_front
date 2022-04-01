@@ -6,10 +6,10 @@ interface IDefaultCheckbox {
     id: string,
     name: string,
     label: string,
-    value?: boolean,
+    value?: number,
 }
 
-export function DefaultCheckbox({ id, name, value=false, label, ...rest }: IDefaultCheckbox) {
+export function DefaultCheckbox({ id, name, value=0, label, ...rest }: IDefaultCheckbox) {
     const checkboxRef = useRef(null)
     const { fieldName, defaultValue, registerField, error } = useField(name)
     const defaultChecked = defaultValue === value
@@ -31,6 +31,9 @@ export function DefaultCheckbox({ id, name, value=false, label, ...rest }: IDefa
     }, [defaultValue, fieldName, registerField, defaultChecked])
     return (
         <Checkbox
+            defaultChecked={undefined}
+            onBlur={undefined}
+            checked={undefined}
             isRequired={false}
             size={'md'}
             id={id}
@@ -38,8 +41,7 @@ export function DefaultCheckbox({ id, name, value=false, label, ...rest }: IDefa
             value={value}
             colorScheme='blue'
             ref={checkboxRef}
-            {...rest}
-        >
+            {...rest}        >
             {label}
         </Checkbox>
     )
