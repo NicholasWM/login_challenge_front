@@ -17,7 +17,6 @@ export const theme = extendTheme({
             color:'#152542',
             body:{
                 bg: '#f8f8f8',
-                color:'gray.650',
                 maxWidth: "1440px",
                 margin: "0 auto",
                 fontSize:'1rem',
