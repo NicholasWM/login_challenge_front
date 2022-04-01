@@ -1,36 +1,22 @@
-import { Avatar, Checkbox, Flex, FormControl, Stack, Text } from "@chakra-ui/react";
+import { Flex, FormControl, Stack, Text } from "@chakra-ui/react";
 import { Form } from "@unform/web";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { DefaultButton } from "../components/DefaultButton";
 import { DefaultInput } from "../components/DefaultInput";
 import * as Yup from 'yup'
-import { RequiredStringSchema } from "yup/lib/string";
-import { AnyObject } from "yup/lib/types";
 import { DefaultCheckbox } from "../components/DefaultCheckbox";
 import DefaultFileInput from "../components/DefaultFileInput";
+import { deleteValidationError, phoneRegExp, removeSpecialCharacters, setValidationErrors, ValidationSchema } from "../helpers";
 
-type ValidationSchema = RequiredStringSchema<string, AnyObject>
 type NameFields = 'name' | 'email' | 'passwordConfirmation' | 'phoneNumber' | 'password' | 'photo'
 type ValidationSchemas = {
     [name in NameFields]: ValidationSchema
 }
+
 export function UserForm() {
     const [userName, setUsername] = useState('Username')
     
     const formRef = useRef(null)
-    const phoneRegExp = /^\s*(\d{2}|\d{0})[-. ]?(\d{5}|\d{4})[-. ]?(\d{4})[-. ]?\s*$/
-    const removeSpecialCharacters = (str: string) => str.replace(/[~`!@#$%^&*()+={}\[\];:\'\"<>.,\/\\\?-_]/g, '')
-useEffect(()=> {},[])
-    const setValidationErrors = (error) => {
-        const validationErrors = {};
-        if (error instanceof Yup.ValidationError) {
-            error.inner.forEach(error => {
-                validationErrors[error.path] = error.message;
-            });
-            const currentErrors = formRef.current.getErrors()
-            formRef.current.setErrors({ ...validationErrors, ...currentErrors });
-        }
-    }
 
     const validateSchemas: ValidationSchemas = {
         name: Yup.string().required(),
@@ -41,16 +27,6 @@ useEffect(()=> {},[])
         photo: Yup.string()
     }
 
-    const deleteValidationError = (name: NameFields[]) => {
-        let updatedErrors = {}
-        const currentErrors = formRef.current.getErrors()
-        Object.keys(currentErrors).forEach((e: NameFields) => {
-            if (!name.includes(e)) {
-                updatedErrors[e] = currentErrors[e]
-            }
-        })
-        formRef.current.setErrors(updatedErrors);
-    }
     const handleValidate = async (schemas: ValidationSchemas, name: NameFields) => {
         try {
             let schema = {} as Yup.ObjectSchema<any>
@@ -64,10 +40,11 @@ useEffect(()=> {},[])
                     }, {
                         abortEarly: false
                     })
-                    deleteValidationError(['password', 'passwordConfirmation'])
+                    deleteValidationError({names:['password', 'passwordConfirmation'], formRef})
                     return;
                 }
             }
+            
             schema = Yup.object().shape({ [name]: schemas[name] })
             if(name=== 'name'){
                 setUsername(fieldValue)
@@ -81,10 +58,10 @@ useEffect(()=> {},[])
                     abortEarly: false
                 })
             }
-            deleteValidationError([name])
+            deleteValidationError({names:[name], formRef})
             return;
         } catch (error) {
-            setValidationErrors(error)
+            setValidationErrors(error, formRef)
         }
     }
 
@@ -105,7 +82,7 @@ useEffect(()=> {},[])
             })
             console.log(data)
         } catch (err) {
-            setValidationErrors(err)
+            setValidationErrors(err, formRef)
         }
     }
     return (
