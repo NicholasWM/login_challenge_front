@@ -33,6 +33,7 @@ export function DefaultCheckbox({ id, name, value=0, label, ...rest }: IDefaultC
         <Checkbox
             isRequired={false}
             isChecked={defaultValue}
+            borderColor="gray.400"
             size={'md'}
             id={id}
             name={name}
