@@ -1,4 +1,5 @@
 import { GetServerSideProps } from 'next'
+import Router from "next/router";
 import { Avatar, Badge, Button, HStack, Stack, Table, TableContainer, Tbody, Td, Spinner, Tr, Center } from '@chakra-ui/react'
 import { FcCancel, FcCheckmark } from 'react-icons/fc'
 import { DefaultCard } from '../components/DefaultCard'
@@ -11,23 +12,30 @@ import { DefaultButton } from '../components/DefaultButton'
 import { parseCookies } from 'nookies'
 import { useNotifier } from '../contexts/Notifier'
 
+
 export default function Home() {
   const { user, signOut } = useAuth();
   const { toggleNotifier } = useNotifier();
   const [urlProtected, setUrlProtected] = useState('')
   useEffect(() => {
     if (Object.keys(user).length) {
+      console.log(user.hasPermission)
+      if(user.hasPermission){
         userApi.getUserImage(user?.id).then(data => {
           const url = window.URL.createObjectURL(new Blob([data]))
           setUrlProtected(url)
         }).catch(e => {
           toggleNotifier({ message: 'Erro ao buscar as imagens', status: 'error' })
         })
+      }else{
+        Router.push('/noPermission')
+        toggleNotifier({ message: 'Você não tem permissão de acesso!', status: 'warning' })
+      }
     }
   }, [user])
   return (
     <>
-      {Object.keys(user).length ? (
+      {Object.keys(user).length && user.hasPermission ? (
         <DefaultLayout title='Home'>
           <DefaultCard>
             <HStack spacing={'1rem'}>
@@ -55,7 +63,6 @@ export default function Home() {
               )}
             </HStack>
             <TableContainer mt={"2rem"}>
-              {JSON.stringify(user.imageName)}
               <Table size='sm' variant={'striped'}>
                 <Tbody>
                   <Tr>
@@ -67,7 +74,7 @@ export default function Home() {
                     <Td>{user?.name}</Td>
                   </Tr>
                   <Tr>
-                    <Td>Has Permission</Td>
+                    <Td>Tem acesso</Td>
                     <Td>{user?.hasPermission ? (<FcCheckmark />) : (<FcCancel />)}</Td>
                   </Tr>
                   <Tr>
@@ -81,19 +88,19 @@ export default function Home() {
                   <Tr>
                     <Td>External Image</Td>
                     <Td>
-                      <Button colorScheme={"linkedin"} disabled={!user.imageName} size={'xs'} onClick={()=> {window.open(user.imageExternalUrl, '_blank').focus();}}>OPEN IMAGE</Button>
+                      <Button colorScheme={"linkedin"} disabled={!user.imageName} size={'xs'} onClick={() => { window.open(user.imageExternalUrl, '_blank').focus(); }}>OPEN IMAGE</Button>
                     </Td>
                   </Tr>
                   <Tr>
                     <Td>Internal Image</Td>
                     <Td>
-                      <Button colorScheme={"linkedin"} disabled={!user.imageName} size={'xs'} onClick={()=> {window.open(`http://localhost:4000/images/${user?.id}`, '_blank').focus();}} >OPEN IMAGE</Button>
+                      <Button colorScheme={"linkedin"} disabled={!user.imageName} size={'xs'} onClick={() => { window.open(`http://localhost:4000/images/${user?.id}`, '_blank').focus(); }} >OPEN IMAGE</Button>
                     </Td>
                   </Tr>
                   <Tr>
                     <Td>Internal Protected Image</Td>
                     <Td>
-                      <Button colorScheme={"linkedin"} disabled={!user.imageName} size={'xs'} onClick={()=> {window.open(`http://localhost:4000/user/image/${user?.id}`, '_blank').focus();}}>OPEN IMAGE</Button>
+                      <Button colorScheme={"linkedin"} disabled={!user.imageName} size={'xs'} onClick={() => { window.open(`http://localhost:4000/user/image/${user?.id}`, '_blank').focus(); }}>OPEN IMAGE</Button>
                     </Td>
                   </Tr>
                 </Tbody>
@@ -105,7 +112,6 @@ export default function Home() {
         </DefaultLayout>
       ) : (
         <Center w='100%' height={'40rem'}>
-
           <Spinner
             thickness='4px'
             speed='0.65s'
