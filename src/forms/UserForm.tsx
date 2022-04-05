@@ -21,7 +21,7 @@ interface IUserForm {
     isCreate?: boolean
 }
 export function UserForm({ isCreate = true }: IUserForm) {
-    const { signUp, updateUser, user } = useAuth()
+    const { signUp, updateUser, deleteUser, user } = useAuth()
     const { isOpen, onOpen, onClose, onToggle } = useDisclosure()
     const [userName, setUsername] = useState('Vixting')
     const formRef = useRef(null)
@@ -150,7 +150,7 @@ export function UserForm({ isCreate = true }: IUserForm) {
                     <ModalBody>
                         <Text>Certeza que deseja deletar sua conta?</Text>
                         <HStack mt={'2rem'} justify="space-between" align="center">
-                            <Button w={'50%'} size="sm" colorScheme={"red"}>Deletar conta</Button>
+                            <Button w={'50%'} size="sm" onClick={()=> {deleteUser(); onClose()}} colorScheme={"red"}>Deletar conta</Button>
                             <Button w={'50%'} size="sm" onClick={onToggle} colorScheme={"blue"}>Voltar</Button>
                         </HStack>
                     </ModalBody>

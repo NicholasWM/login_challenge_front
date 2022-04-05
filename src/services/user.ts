@@ -17,11 +17,6 @@ export const userApi = {
     updateUser: async (updateUserProps: UpdateUserProps):Promise<UpdateUserResponse> => {
         const formData = new FormData()
         Object.keys(updateUserProps).forEach(item => {
-            console.log(`
-                Item: ${item}
-                Props: ${updateUserProps[item]}
-                Condition: ${updateUserProps[item] !== undefined}
-            `)
             if(updateUserProps[item] !== undefined){
                 formData.append(item, updateUserProps[item])
             }
@@ -36,7 +31,7 @@ export const userApi = {
         return data
     },
     deleteUser: async ({id}:DeleteUserProps):Promise<DeleteUserResponse> => {
-        const {data} = await api.delete(backendRoutes.DELETE.deleteUser, {data:{ id }})
+        const {data} = await api.delete(backendRoutes.DELETE.deleteUser, {data:{ id }, headers:{...getAuthHeaders()}})
         return data
     }
 }

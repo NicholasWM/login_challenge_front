@@ -14,6 +14,7 @@ interface AuthContextData {
     signOut: () => void,
     signUp: (signUpProps: SignUpProps) => void,
     updateUser: (updateUserProps: UpdateUserProps) => void,
+    deleteUser: ()=>void,
 }
 
 interface AuthProviderProps {
@@ -64,11 +65,14 @@ export function AuthProvider({ children }: AuthProviderProps): JSX.Element {
         toggleNotifier({ message: 'Usuario criado com sucesso', status: 'info' })
     }
 
-    async function deleteUser(userId){
+    async function deleteUser(){
         try {
+            await userApi.deleteUser({id:user.id})
+            destroyCookie(undefined, authNameCookie);
+            Router.push('/')
             
         } catch (error) {
-            
+            toggleNotifier({ message: 'Erro ao deletar usuario', status: 'error' })   
         }
     }
 
@@ -102,6 +106,7 @@ export function AuthProvider({ children }: AuthProviderProps): JSX.Element {
                 signOut,
                 signUp,
                 updateUser,
+                deleteUser
             }}
         >
             {children}
