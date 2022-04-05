@@ -8,11 +8,18 @@ import { DefaultButton } from "../components/DefaultButton";
 import { DefaultInput } from "../components/DefaultInput";
 
 import { deleteValidationError, setValidationErrors, ValidationSchemas } from "../helpers";
+import { useNotifier } from "../contexts/Notifier";
+import { useRouter } from "next/router";
+import { auth } from "../services/auth";
+import { useAuth } from "../contexts/Auth";
 
 type NameFields = 'email' | 'password'
 type FormValidationSchemas = ValidationSchemas<NameFields>
 
 export function LoginForm() {
+  const {toggleNotifier} = useNotifier()
+  const {signIn} = useAuth()
+  const router = useRouter()
   const formRef = useRef(null)
   const validateSchemas: FormValidationSchemas = {
     email: Yup.string().email().required(),
@@ -43,7 +50,10 @@ export function LoginForm() {
       await schema.validate(data, {
         abortEarly: false
       })
-      console.log(data)
+      // console.log(data)
+      
+      signIn(data)
+
     } catch (err) {
       setValidationErrors(err, formRef)
     }
@@ -52,7 +62,6 @@ export function LoginForm() {
     <Stack
       width={'100%'}
     >
-
       <Form noValidate={false} ref={formRef} onSubmit={handleFormSubmit}>
         <FormControl isRequired>
           <Stack
@@ -74,10 +83,10 @@ export function LoginForm() {
               name="password"
               onChange={()=> {handleValidate(validateSchemas, 'password')}}
             />
-            <DefaultButton type="submit">
+            <DefaultButton onClick={()=>{}} type="submit">
               Entrar
             </DefaultButton>
-            <DefaultButton variant="outline">
+            <DefaultButton onClick={()=> router.push('/signup')} variant="outline">
               Cadastrar
             </DefaultButton>
           </Stack>
