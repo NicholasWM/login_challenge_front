@@ -52,7 +52,7 @@ export default function DefaultFileInput({ initialUrl, name, userName='User',...
 
     return (
         <>
-            <Avatar size='2xl' name={userName} src={preview ? preview : initialUrl || ''} />
+            <Avatar onError={()=> {}} size='2xl' name={userName} src={preview ? preview : initialUrl || ''} />
             <input type="file" style={{marginTop:'1rem'}} ref={inputRef} onChange={handlePreview} {...rest} />
         </>
     );

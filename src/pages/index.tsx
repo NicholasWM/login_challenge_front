@@ -57,7 +57,7 @@ export default function Home() {
                       onError={() => {
                         toggleNotifier({ message: 'Erro ao buscar as imagens', status: 'error' })
                       }}
-                      size={"lg"} src={`${api.defaults.baseURL}/images/${user.id}`} />
+                      size={"lg"} src={user.imageName?`${api.defaults.baseURL}/images/${user.id}`:''} />
                     <Badge colorScheme={"blue"}>Internal API</Badge>
                   </Stack>
                   <Stack align={"center"}>

@@ -39,13 +39,18 @@ export function AuthProvider({ children }: AuthProviderProps): JSX.Element {
             }).catch(error => {
                 destroyCookie(undefined, authNameCookie)
                 console.log(error)
+                Router.push('/login')
             })
         }
     }, [])
 
     async function signIn({ email, password }: SignInProps) {
-        const { token, ...user } = await auth.signIn({ email, password })
-        setSession(token, user);
+        try {
+            const { token, ...user } = await auth.signIn({ email, password })
+            setSession(token, user);
+        } catch (error) {
+            toggleNotifier({ message: 'Email ou senha inválidos!', status: 'error' })
+        }
     }
 
     async function setSession(token: string, user: User) {
@@ -59,7 +64,7 @@ export function AuthProvider({ children }: AuthProviderProps): JSX.Element {
     }
 
     async function signUp(signUpProps: SignUpProps) {
-        const { message, user: userData } = await auth.signUp(signUpProps)
+        const { user: userData } = await auth.signUp(signUpProps)
         const { token, ...user } = userData
         setSession(token, user);
         toggleNotifier({ message: 'Usuario criado com sucesso', status: 'info' })

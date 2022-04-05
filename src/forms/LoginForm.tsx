@@ -88,9 +88,9 @@ export function LoginForm() {
               Cadastrar
             </DefaultButton>
           </Stack>
-          <Link href="" passHref>
-            <Text cursor={'pointer'} color={'#015eff'} mt="1rem" textAlign={'end'}>Esqueceu a senha?</Text>
-          </Link>
+          {/* <Link href="" passHref> */}
+            <Text onClick={()=> {toggleNotifier({message: 'Não implementado!', status: 'warning'})}} cursor={'pointer'} color={'#015eff'} mt="1rem" textAlign={'end'}>Esqueceu a senha?</Text>
+          {/* </Link> */}
         </FormControl>
       </Form>
     </Stack>
