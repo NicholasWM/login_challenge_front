@@ -20,12 +20,14 @@ export default function Home() {
   useEffect(() => {
     if (Object.keys(user).length) {
       if (user.hasPermission) {
-        userApi.getUserImage(user?.id).then(data => {
-          const url = window.URL.createObjectURL(new Blob([data]))
-          setUrlProtected(url)
-        }).catch(e => {
-          toggleNotifier({ message: 'Erro ao buscar as imagens', status: 'error' })
-        })
+        if(user?.imageName){
+          userApi.getUserImage(user?.id).then(data => {
+            const url = window.URL.createObjectURL(new Blob([data]))
+            setUrlProtected(url)
+          }).catch(e => {
+            toggleNotifier({ message: 'Erro ao buscar as imagens', status: 'error' })
+          })
+        }
       } else {
         Router.push('/noPermission')
         toggleNotifier({ message: 'Você não tem permissão de acesso!', status: 'warning' })
@@ -39,23 +41,33 @@ export default function Home() {
           <DefaultCard>
             <HStack spacing={'1rem'}>
               <Stack align={"center"}>
-                <Avatar size={"lg"} onError={() => {
-                  toggleNotifier({ message: 'Erro ao buscar as imagens', status: 'error' })
-                }} src={user.imageExternalUrl} />
+                <Avatar
+                  size={"lg"}
+                  onError={() => {
+                    toggleNotifier({ message: 'Erro ao buscar as imagens', status: 'error' })
+                  }}
+                  src={user.imageExternalUrl}
+                />
                 <Badge colorScheme={"green"}>Public External</Badge>
               </Stack>
               {user && (
                 <>
                   <Stack align={"center"}>
-                    <Avatar onError={() => {
-                      toggleNotifier({ message: 'Erro ao buscar as imagens', status: 'error' })
-                    }} size={"lg"} src={`${api.defaults.baseURL}/images/${user.id}`} />
+                    <Avatar
+                      onError={() => {
+                        toggleNotifier({ message: 'Erro ao buscar as imagens', status: 'error' })
+                      }}
+                      size={"lg"} src={`${api.defaults.baseURL}/images/${user.id}`} />
                     <Badge colorScheme={"blue"}>Internal API</Badge>
                   </Stack>
                   <Stack align={"center"}>
-                    <Avatar onError={() => {
-                      toggleNotifier({ message: 'Erro ao buscar as imagens', status: 'error' })
-                    }} size={"lg"} src={urlProtected} />
+                    <Avatar
+                      onError={() => {
+                        toggleNotifier({ message: 'Erro ao buscar as imagens', status: 'error' })
+                      }}
+                      size={"lg"}
+                      src={urlProtected}
+                    />
                     <Badge colorScheme={"blue"}>Internal Protected</Badge>
                   </Stack>
                 </>

@@ -7,12 +7,16 @@ import { DeleteUserProps, DeleteUserResponse, UpdateUserProps, UpdateUserRespons
 
 export const userApi = {
     getUserImage: async (userId: number): Promise<any> => {
-        const { [authNameCookie]: token } = parseCookies();
-        const {data} = await api.get(`${backendRoutes.GET.protectedUserImage}/${userId}`, {
-            responseType: 'blob',
-            headers: { "Authorization": token }
-        })
-        return data
+        try {
+            const { [authNameCookie]: token } = parseCookies();
+            const {data} = await api.get(`${backendRoutes.GET.protectedUserImage}/${userId}`, {
+                responseType: 'blob',
+                headers: { "Authorization": token }
+            })
+            return data
+        } catch (error) {
+            console.log(error)            
+        }
     },
     updateUser: async (updateUserProps: UpdateUserProps):Promise<UpdateUserResponse> => {
         const formData = new FormData()
