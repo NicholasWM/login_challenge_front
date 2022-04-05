@@ -48,6 +48,7 @@ export function AuthProvider({ children }: AuthProviderProps): JSX.Element {
         try {
             const { token, ...user } = await auth.signIn({ email, password })
             setSession(token, user);
+            toggleNotifier({ message: 'Login Efetuado com sucesso', status: 'info' })
         } catch (error) {
             toggleNotifier({ message: 'Email ou senha inválidos!', status: 'error' })
         }
@@ -59,7 +60,6 @@ export function AuthProvider({ children }: AuthProviderProps): JSX.Element {
         })
         api.defaults.headers['Authorization'] = `Bearer ${token}`
         setUser(user)
-        toggleNotifier({ message: 'Login Efetuado com sucesso', status: 'info' })
         Router.push('/')
     }
 
@@ -73,6 +73,7 @@ export function AuthProvider({ children }: AuthProviderProps): JSX.Element {
     async function deleteUser(){
         try {
             await userApi.deleteUser({id:user.id})
+            toggleNotifier({ message: 'Usuário deletado com sucesso!', status: 'info' })   
             destroyCookie(undefined, authNameCookie);
             Router.push('/')
             

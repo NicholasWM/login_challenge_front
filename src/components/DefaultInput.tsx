@@ -45,6 +45,7 @@ export function DefaultInput({
                 ref={inputRef}
                 name={name}
                 as={InputMask}
+                borderColor="gray.400"
                 focusBorderColor="#015eff"
                 style={error && {borderColor:'red'}}
                 fontSize='16px'
