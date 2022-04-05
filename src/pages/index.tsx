@@ -20,14 +20,14 @@ export default function Home() {
   useEffect(() => {
     if (Object.keys(user).length) {
       console.log(user.hasPermission)
-      if(user.hasPermission){
+      if (user.hasPermission) {
         userApi.getUserImage(user?.id).then(data => {
           const url = window.URL.createObjectURL(new Blob([data]))
           setUrlProtected(url)
         }).catch(e => {
           toggleNotifier({ message: 'Erro ao buscar as imagens', status: 'error' })
         })
-      }else{
+      } else {
         Router.push('/noPermission')
         toggleNotifier({ message: 'Você não tem permissão de acesso!', status: 'warning' })
       }
@@ -106,7 +106,7 @@ export default function Home() {
                 </Tbody>
               </Table>
             </TableContainer>
-            <DefaultButton mt={'2rem'}>Editar</DefaultButton>
+            <DefaultButton onClick={() => { Router.push('/update') }} mt={'2rem'}>Editar</DefaultButton>
             <DefaultButton onClick={signOut} variant="outline" mt={'1rem'}>Logout</DefaultButton>
           </DefaultCard>
         </DefaultLayout>

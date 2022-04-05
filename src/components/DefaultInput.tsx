@@ -22,7 +22,7 @@ export function DefaultInput({
     onChange,
     ...rest
 }: IDefaultInputProps) {
-    const inputRef = useRef(null)
+    const inputRef = useRef<HTMLInputElement>(null)
     const { fieldName, defaultValue, registerField, error } = useField(name)
     useEffect(() => {
         registerField({

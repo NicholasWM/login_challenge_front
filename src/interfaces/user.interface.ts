@@ -7,3 +7,19 @@ export interface User {
     imageExternalUrl:string,
     imageName:string,
 }
+
+export interface UpdateUserResponse {
+    message:string,
+    status: number
+}
+
+export interface UpdateUserProps {
+    id:number,
+    name?:string,
+    email?:string,
+    phoneNumber?:string,
+    hasPermission?:boolean,
+    password?:string,
+    passwordConfirmation?:string,
+    file?:File,
+}

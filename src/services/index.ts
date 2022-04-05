@@ -10,6 +10,9 @@ export const backendRoutes = {
         signIn: '/auth/signin',
         signUp: '/auth/signup',
     },
+    PUT:{
+        updateUser: '/user'
+    }
 }
 
 export const api = axios.create({

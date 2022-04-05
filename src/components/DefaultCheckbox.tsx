@@ -10,7 +10,7 @@ interface IDefaultCheckbox {
 }
 
 export function DefaultCheckbox({ id, name, value=0, label, ...rest }: IDefaultCheckbox) {
-    const checkboxRef = useRef(null)
+    const checkboxRef = useRef<HTMLInputElement>(null)
     const { fieldName, defaultValue, registerField, error } = useField(name)
     const defaultChecked = defaultValue === value
 
@@ -31,12 +31,11 @@ export function DefaultCheckbox({ id, name, value=0, label, ...rest }: IDefaultC
     }, [defaultValue, fieldName, registerField, defaultChecked])
     return (
         <Checkbox
-            defaultChecked={defaultChecked}
             isRequired={false}
+            isChecked={defaultValue}
             size={'md'}
             id={id}
             name={name}
-            value={value}
             colorScheme='blue'
             ref={checkboxRef}
             {...rest}        >
