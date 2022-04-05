@@ -25,7 +25,6 @@ export const auth = {
         const {data} = await api.get<GetMeResponse>(backendRoutes.GET.getMe, {
             headers:{...getAuthHeaders()},
         })
-        console.log(data)
         return data
     }
 }

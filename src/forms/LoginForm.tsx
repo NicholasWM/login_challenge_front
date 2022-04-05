@@ -50,8 +50,6 @@ export function LoginForm() {
       await schema.validate(data, {
         abortEarly: false
       })
-      // console.log(data)
-      
       signIn(data)
 
     } catch (err) {

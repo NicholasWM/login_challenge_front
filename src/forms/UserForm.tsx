@@ -40,7 +40,6 @@ export function UserForm({ isCreate = true }: IUserForm) {
                     passwordConfirmation: '',
                     file: ''
                 })
-                console.log(formRef.current.getData())
             }
         }
     }, [user])
@@ -133,10 +132,9 @@ export function UserForm({ isCreate = true }: IUserForm) {
                     password: data?.password ? data?.password : undefined,
                     passwordConfirmation: data?.passwordConfirmation ? data?.passwordConfirmation : undefined,
                     phoneNumber: data?.phoneNumber && user.phoneNumber !== data?.phoneNumber ? data?.phoneNumber : undefined,
-                    hasPermission: data?.hasPermission && user.hasPermission !== data?.hasPermission ? data?.hasPermission : undefined,
+                    hasPermission: user.hasPermission !== data?.hasPermission ? data?.hasPermission : undefined,
                     file: data?.file ? data?.file : undefined,
                 })
-                console.log(data)
             }
         } catch (err) {
             setValidationErrors(err, formRef)

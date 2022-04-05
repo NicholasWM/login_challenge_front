@@ -52,7 +52,6 @@ export function AuthProvider({ children }: AuthProviderProps): JSX.Element {
             maxAge: 60 * 60 * 24, // 24 hours
         })
         api.defaults.headers['Authorization'] = `Bearer ${token}`
-        console.log(token, user)
         setUser(user)
         toggleNotifier({ message: 'Login Efetuado com sucesso', status: 'info' })
         Router.push('/')
@@ -65,9 +64,17 @@ export function AuthProvider({ children }: AuthProviderProps): JSX.Element {
         toggleNotifier({ message: 'Usuario criado com sucesso', status: 'info' })
     }
 
+    async function deleteUser(userId){
+        try {
+            
+        } catch (error) {
+            
+        }
+    }
+
     async function updateUser(updateUserProps: UpdateUserProps) {
         try {
-            const { message, status } = await userApi.updateUser(updateUserProps)
+            const { status } = await userApi.updateUser(updateUserProps)
             const {...user} = await auth.getMe()
             setUser(user);
             if(status === 200){

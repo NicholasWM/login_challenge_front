@@ -19,7 +19,6 @@ export default function Home() {
   const [urlProtected, setUrlProtected] = useState('')
   useEffect(() => {
     if (Object.keys(user).length) {
-      console.log(user.hasPermission)
       if (user.hasPermission) {
         userApi.getUserImage(user?.id).then(data => {
           const url = window.URL.createObjectURL(new Blob([data]))
@@ -128,7 +127,6 @@ export default function Home() {
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const { [authNameCookie]: token } = parseCookies(ctx)
-  console.log(ctx.req.cookies);
   if (!token) {
     return {
       redirect: {

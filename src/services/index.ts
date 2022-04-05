@@ -12,6 +12,9 @@ export const backendRoutes = {
     },
     PUT:{
         updateUser: '/user'
+    },
+    DELETE: {
+        deleteUser: '/user'
     }
 }
 

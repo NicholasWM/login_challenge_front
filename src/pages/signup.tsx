@@ -17,7 +17,6 @@ export default function SignUp() {
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const { [authNameCookie]: token } = parseCookies(ctx)
-  console.log(ctx.req.cookies);
   if (token) {
     return {
       redirect: {

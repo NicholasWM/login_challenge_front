@@ -1,6 +1,6 @@
 import { parseCookies } from "nookies";
 import { api, authNameCookie, backendRoutes, getAuthHeaders } from ".";
-import { UpdateUserProps, UpdateUserResponse } from "../interfaces/user.interface";
+import { DeleteUserProps, DeleteUserResponse, UpdateUserProps, UpdateUserResponse } from "../interfaces/user.interface";
 
 // UPDATE DO USUARIO -> FAZER GETME PARA ATUALIZAR OS DADOS
 // DELETE DO USUARIO -> MODAL PERGUNTANDO SE TEM CERTEZA
@@ -8,16 +8,21 @@ import { UpdateUserProps, UpdateUserResponse } from "../interfaces/user.interfac
 export const userApi = {
     getUserImage: async (userId: number): Promise<any> => {
         const { [authNameCookie]: token } = parseCookies();
-        const response = await api.get(`${backendRoutes.GET.protectedUserImage}/${userId}`, {
+        const {data} = await api.get(`${backendRoutes.GET.protectedUserImage}/${userId}`, {
             responseType: 'blob',
             headers: { "Authorization": token }
         })
-        return response.data
+        return data
     },
     updateUser: async (updateUserProps: UpdateUserProps):Promise<UpdateUserResponse> => {
         const formData = new FormData()
         Object.keys(updateUserProps).forEach(item => {
-            if(updateUserProps[item]){
+            console.log(`
+                Item: ${item}
+                Props: ${updateUserProps[item]}
+                Condition: ${updateUserProps[item] !== undefined}
+            `)
+            if(updateUserProps[item] !== undefined){
                 formData.append(item, updateUserProps[item])
             }
         })
@@ -28,6 +33,10 @@ export const userApi = {
                 ...getAuthHeaders()
             }
         });
-        return {...data}
+        return data
+    },
+    deleteUser: async ({id}:DeleteUserProps):Promise<DeleteUserResponse> => {
+        const {data} = await api.delete(backendRoutes.DELETE.deleteUser, {data:{ id }})
+        return data
     }
 }

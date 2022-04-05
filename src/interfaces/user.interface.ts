@@ -23,3 +23,12 @@ export interface UpdateUserProps {
     passwordConfirmation?:string,
     file?:File,
 }
+
+export interface DeleteUserProps {
+    id: number
+}
+
+export interface DeleteUserResponse {
+    message: string,
+    status: number
+}
