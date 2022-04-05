@@ -1,5 +1,5 @@
 import { GetServerSideProps } from 'next'
-import { Avatar, Badge, Button, Flex, HStack, Stack, Table, TableContainer, Tbody, Td, Spinner, Tr, Center, Slide, useDisclosure } from '@chakra-ui/react'
+import { Avatar, Badge, Button, HStack, Stack, Table, TableContainer, Tbody, Td, Spinner, Tr, Center } from '@chakra-ui/react'
 import { FcCancel, FcCheckmark } from 'react-icons/fc'
 import { DefaultCard } from '../components/DefaultCard'
 import DefaultLayout from '../components/DefaultLayout'
@@ -9,17 +9,20 @@ import { useEffect, useState } from 'react'
 import { userApi } from '../services/user'
 import { DefaultButton } from '../components/DefaultButton'
 import { parseCookies } from 'nookies'
-import { useSideEffects } from '../contexts/SideEffects'
+import { useNotifier } from '../contexts/Notifier'
 
 export default function Home() {
   const { user, signOut } = useAuth();
+  const { toggleNotifier } = useNotifier();
   const [urlProtected, setUrlProtected] = useState('')
   useEffect(() => {
     if (Object.keys(user).length) {
-      userApi.getUserImage(user.id).then(data => {
-        const url = window.URL.createObjectURL(new Blob([data]))
-        setUrlProtected(url)
-      })
+        userApi.getUserImage(user?.id).then(data => {
+          const url = window.URL.createObjectURL(new Blob([data]))
+          setUrlProtected(url)
+        }).catch(e => {
+          toggleNotifier({ message: 'Erro ao buscar as imagens', status: 'error' })
+        })
     }
   }, [user])
   return (
@@ -29,61 +32,68 @@ export default function Home() {
           <DefaultCard>
             <HStack spacing={'1rem'}>
               <Stack align={"center"}>
-                <Avatar size={"lg"} src={user.imageExternalUrl} />
+                <Avatar size={"lg"} onError={() => {
+                  toggleNotifier({ message: 'Erro ao buscar as imagens', status: 'error' })
+                }} src={user.imageExternalUrl} />
                 <Badge colorScheme={"green"}>Public External</Badge>
               </Stack>
               {user && (
                 <>
                   <Stack align={"center"}>
-                    <Avatar size={"lg"} src={`${api.defaults.baseURL}/images/${user.id}`} />
+                    <Avatar onError={() => {
+                      toggleNotifier({ message: 'Erro ao buscar as imagens', status: 'error' })
+                    }} size={"lg"} src={`${api.defaults.baseURL}/images/${user.id}`} />
                     <Badge colorScheme={"blue"}>Internal API</Badge>
                   </Stack>
                   <Stack align={"center"}>
-                    <Avatar size={"lg"} src={urlProtected} />
+                    <Avatar onError={() => {
+                      toggleNotifier({ message: 'Erro ao buscar as imagens', status: 'error' })
+                    }} size={"lg"} src={urlProtected} />
                     <Badge colorScheme={"blue"}>Internal Protected</Badge>
                   </Stack>
                 </>
               )}
             </HStack>
             <TableContainer mt={"2rem"}>
+              {JSON.stringify(user.imageName)}
               <Table size='sm' variant={'striped'}>
                 <Tbody>
                   <Tr>
                     <Td>ID</Td>
-                    <Td>{user.id}</Td>
+                    <Td>{user?.id}</Td>
                   </Tr>
                   <Tr>
                     <Td>Nome</Td>
-                    <Td>{user.name}</Td>
+                    <Td>{user?.name}</Td>
                   </Tr>
                   <Tr>
                     <Td>Has Permission</Td>
-                    <Td>{user.hasPermission ? (<FcCheckmark />) : (<FcCancel />)}</Td>
+                    <Td>{user?.hasPermission ? (<FcCheckmark />) : (<FcCancel />)}</Td>
                   </Tr>
                   <Tr>
                     <Td>E-mail</Td>
-                    <Td>{user.email}</Td>
+                    <Td>{user?.email}</Td>
                   </Tr>
                   <Tr>
                     <Td>Telefone</Td>
-                    <Td>{user.phoneNumber}</Td>
+                    <Td>{user?.phoneNumber}</Td>
                   </Tr>
                   <Tr>
                     <Td>External Image</Td>
                     <Td>
-                      <Button colorScheme={"linkedin"} size={'xs'} as="a" target={"_blank"} href={user.imageExternalUrl}>OPEN IMAGE</Button>
+                      <Button colorScheme={"linkedin"} disabled={!user.imageName} size={'xs'} onClick={()=> {window.open(user.imageExternalUrl, '_blank').focus();}}>OPEN IMAGE</Button>
                     </Td>
                   </Tr>
                   <Tr>
                     <Td>Internal Image</Td>
                     <Td>
-                      <Button colorScheme={"linkedin"} size={'xs'} as="a" target={"_blank"} href={`http://localhost:4000/images/${user.id}`}>OPEN IMAGE</Button>
+                      <Button colorScheme={"linkedin"} disabled={!user.imageName} size={'xs'} onClick={()=> {window.open(`http://localhost:4000/images/${user?.id}`, '_blank').focus();}} >OPEN IMAGE</Button>
                     </Td>
                   </Tr>
                   <Tr>
                     <Td>Internal Protected Image</Td>
                     <Td>
-                      <Button colorScheme={"linkedin"} size={'xs'} as="a" target={"_blank"} href={`http://localhost:4000/user/image/${user.id}`}>OPEN IMAGE</Button>
+                      <Button colorScheme={"linkedin"} disabled={!user.imageName} size={'xs'} onClick={()=> {window.open(`http://localhost:4000/user/image/${user?.id}`, '_blank').focus();}}>OPEN IMAGE</Button>
                     </Td>
                   </Tr>
                 </Tbody>

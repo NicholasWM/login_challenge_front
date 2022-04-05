@@ -8,15 +8,20 @@ import { DefaultInput } from "../components/DefaultInput";
 import { DefaultCheckbox } from "../components/DefaultCheckbox";
 import DefaultFileInput from "../components/DefaultFileInput";
 
-import { deleteValidationError, phoneRegExp, removeSpecialCharacters, setValidationErrors, ValidationSchema, ValidationSchemas } from "../helpers";
+import { deleteValidationError, phoneRegExp, removeSpecialCharacters, setValidationErrors, ValidationSchemas } from "../helpers";
 import Router from "next/router";
+import { useAuth } from "../contexts/Auth";
+import { SignUpProps } from "../interfaces/auth.interface";
 
-type NameFields = 'name' | 'email' | 'passwordConfirmation' | 'phoneNumber' | 'password' | 'photo'
-type FormValidationSchemas = ValidationSchemas<NameFields>
+type NameFields = 'name' | 'email' | 'passwordConfirmation' | 'phoneNumber' | 'password' | 'file' | 'hasPermission'
+type FormValidationSchemas = {
+    [name in NameFields]: any
+}
 
 export function UserForm() {
+    const { signUp } = useAuth()
     const [userName, setUsername] = useState('Username')
-    
+
     const formRef = useRef(null)
 
     const validateSchemas: FormValidationSchemas = {
@@ -25,7 +30,8 @@ export function UserForm() {
         password: Yup.string().min(6).required(),
         passwordConfirmation: Yup.string().required('Digite a senha novamente!').oneOf([Yup.ref('password'), null], 'As senhas são diferentes!'),
         phoneNumber: Yup.string().matches(phoneRegExp, 'Numero inválido!'),
-        photo: Yup.string()
+        file: Yup.string(),
+        hasPermission: Yup.boolean()
     }
 
     const handleValidate = async (schemas: FormValidationSchemas, name: NameFields) => {
@@ -41,13 +47,13 @@ export function UserForm() {
                     }, {
                         abortEarly: false
                     })
-                    deleteValidationError({names:['password', 'passwordConfirmation'], formRef})
+                    deleteValidationError({ names: ['password', 'passwordConfirmation'], formRef })
                     return;
                 }
             }
-            
+
             schema = Yup.object().shape({ [name]: schemas[name] })
-            if(name=== 'name'){
+            if (name === 'name') {
                 setUsername(fieldValue)
             }
             if (name === 'phoneNumber') {
@@ -59,14 +65,14 @@ export function UserForm() {
                     abortEarly: false
                 })
             }
-            deleteValidationError({names:[name], formRef})
+            deleteValidationError({ names: [name], formRef })
             return;
         } catch (error) {
             setValidationErrors(error, formRef)
         }
     }
 
-    const handleFormSubmit = async (data) => {
+    const handleFormSubmit = async (data:SignUpProps) => {
         try {
             let formatedData = {}
             Object.keys(data).forEach(item => {
@@ -82,6 +88,15 @@ export function UserForm() {
                 abortEarly: false
             })
             console.log(data)
+            signUp({
+                email: data.email,
+                name: data.name,
+                password: data.password,
+                passwordConfirmation: data.passwordConfirmation,
+                phoneNumber: data.phoneNumber,
+                hasPermission: data.hasPermission,
+                file: data.file,
+            })
         } catch (err) {
             setValidationErrors(err, formRef)
         }
@@ -97,7 +112,7 @@ export function UserForm() {
                     >
                         <Text letterSpacing={'.4px'} fontWeight='600' color="#152542" w="100%" justifyContent={'center'}>Crie sua conta</Text>
                         <Flex flexDir={'column'} align='center' justify={'space-around'}>
-                            <DefaultFileInput name="photo" userName={userName}/>
+                            <DefaultFileInput name="file" userName={userName} />
                         </Flex>
                         <DefaultInput
                             id="name"
@@ -136,14 +151,14 @@ export function UserForm() {
                         <Flex justify={'center'} style={{ marginTop: '1.5rem', marginBottom: '0.5rem' }}>
                             <DefaultCheckbox
                                 id="permission"
-                                name="permission"
+                                name="hasPermission"
                                 label="Permissão de Acesso"
                             />
                         </Flex>
                         <DefaultButton type="submit">
                             Registrar
                         </DefaultButton>
-                        <DefaultButton onClick={()=> Router.push('/login')} variant="outline">
+                        <DefaultButton onClick={() => Router.push('/login')} variant="outline">
                             Já possui conta?
                         </DefaultButton>
                     </Stack>

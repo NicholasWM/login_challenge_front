@@ -31,9 +31,7 @@ export function DefaultCheckbox({ id, name, value=0, label, ...rest }: IDefaultC
     }, [defaultValue, fieldName, registerField, defaultChecked])
     return (
         <Checkbox
-            defaultChecked={undefined}
-            onBlur={undefined}
-            checked={undefined}
+            defaultChecked={defaultChecked}
             isRequired={false}
             size={'md'}
             id={id}
