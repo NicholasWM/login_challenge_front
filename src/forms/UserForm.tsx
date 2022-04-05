@@ -9,6 +9,7 @@ import { DefaultCheckbox } from "../components/DefaultCheckbox";
 import DefaultFileInput from "../components/DefaultFileInput";
 
 import { deleteValidationError, phoneRegExp, removeSpecialCharacters, setValidationErrors, ValidationSchema, ValidationSchemas } from "../helpers";
+import Router from "next/router";
 
 type NameFields = 'name' | 'email' | 'passwordConfirmation' | 'phoneNumber' | 'password' | 'photo'
 type FormValidationSchemas = ValidationSchemas<NameFields>
@@ -141,6 +142,9 @@ export function UserForm() {
                         </Flex>
                         <DefaultButton type="submit">
                             Registrar
+                        </DefaultButton>
+                        <DefaultButton onClick={()=> Router.push('/login')} variant="outline">
+                            Já possui conta?
                         </DefaultButton>
                     </Stack>
                 </FormControl>
